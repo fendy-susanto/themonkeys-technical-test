@@ -15,9 +15,56 @@ class HomeController extends BaseController {
 	|
 	*/
 
-	public function showWelcome()
+	public function showForm()
 	{
-		return View::make('hello');
+		return View::make('form');
+	}
+
+	public function showResult()
+	{
+
+		$input = Input::all();
+
+		$enquiryType = Input::get('enquiry_type');
+
+		$rules = array(
+
+			'firstname' => 'required',
+			'surname' => 'required',
+			'email' => 'required|email',
+			'day_time_contact_number' => 'required',
+			'address' => 'required',
+			'suburb' => 'required',
+			'state' => 'required',
+			'postcode' => 'required',
+			'enquiry_type' => 'required'
+
+		);
+
+		if($enquiryType == 'Product complaint')
+		{
+
+			$rules['product_name'] = 'required';
+			$rules['product_size'] = 'required';
+			$rules['use_by_date'] = 'required';
+			$rules['batch_code'] = 'required';
+			$rules['enquiry'] = 'required';
+		
+		}
+
+		$validation = Validator::make($input, $rules);
+
+		if($validation->fails())
+		{
+
+			return Redirect::to('/')->withInput()->withErrors($validation);
+
+		} else {
+
+			return Redirect::to('/')->with('message', 'Success, thank you for your submission.');
+
+		}
+
 	}
 
 }
